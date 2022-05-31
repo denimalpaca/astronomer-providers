@@ -43,9 +43,10 @@ class RedshiftSQLHookAsync(RedshiftDataHook):
 
     async def is_still_running(self, qid: str) -> Union[bool, Dict[str, str]]:
         """
-        Async function to whether the query is still running or in
-        "PICKED", "STARTED", "SUBMITTED" state and returns True else
-        return False
+        Check whether the query is still running or not.
+        In case of exception return error message.
+
+        param qid: The query id.
         """
         try:
             client = await sync_to_async(self.get_conn)()

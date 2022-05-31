@@ -133,8 +133,7 @@ class EmrStepSensorHookAsync(AwsBaseHookAsync):
 
 class EmrJobFlowHookAsync(AwsBaseHookAsync):
     """
-    EmrJobFlowHookAsync is wrapper Interact with AWS EMR.Using Aiobotocore client makes API
-    call to get cluster-level details by job_flow_id.
+    EmrJobFlowHookAsync is wrapper which interacts with AWS EMR using Aiobotocore client.
     Additional arguments (such as ``aws_conn_id``) may be specified and
     are passed down to the underlying AwsBaseHookAsync.
     """
@@ -147,6 +146,7 @@ class EmrJobFlowHookAsync(AwsBaseHookAsync):
         """
         Using Aiobotocore client makes API call to ``describe_cluster`` get the cluster
         details, from cluster details fetch the cluster status
+
         :param job_flow_id: job_flow_id to check the state of cluster
         """
         async with await self.get_client_async() as client:
@@ -160,6 +160,7 @@ class EmrJobFlowHookAsync(AwsBaseHookAsync):
     def state_from_response(response: Dict[str, Any]) -> str:
         """
         Get state from response dictionary.
+
         :param response: response from AWS API
         :return: current state of the cluster
         """
@@ -170,6 +171,7 @@ class EmrJobFlowHookAsync(AwsBaseHookAsync):
     def failure_message_from_response(response: Dict[str, Any]) -> Optional[str]:
         """
         Get failure message from response dictionary.
+
         :param response: response from EMR AWS API
         """
         cluster_status = response["Cluster"]["Status"]
