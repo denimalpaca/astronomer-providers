@@ -3,6 +3,7 @@ from typing import Any, AsyncIterator, Dict, List, Tuple
 from airflow.triggers.base import BaseTrigger, TriggerEvent
 
 from astronomer.providers.snowflake.hooks.snowflake import SnowflakeHookAsync
+from astronomer.providers.snowflake.hooks.snowflake_poc import SnowflakePOCHook
 
 
 def get_db_hook(snowflake_conn_id: str) -> SnowflakeHookAsync:
@@ -11,6 +12,14 @@ def get_db_hook(snowflake_conn_id: str) -> SnowflakeHookAsync:
     :return: a SnowflakeHookAsync instance.
     """
     return SnowflakeHookAsync(snowflake_conn_id=snowflake_conn_id)
+
+
+def get_db_poc_hook(snowflake_conn_id: str) -> SnowflakeHookAsync:
+    """
+    Create and return SnowflakeHookAsync.
+    :return: a SnowflakeHookAsync instance.
+    """
+    return SnowflakePOCHook(snowflake_conn_id=snowflake_conn_id)
 
 
 class SnowflakeTrigger(BaseTrigger):
