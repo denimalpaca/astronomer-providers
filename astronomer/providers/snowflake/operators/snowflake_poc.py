@@ -9,7 +9,7 @@ from astronomer.providers.snowflake.hooks.snowflake_poc import SnowflakePOCHook
 from astronomer.providers.snowflake.triggers.snowflake_trigger import (
     SnowflakeTrigger,
     get_db_hook,
-    get_db_poc_hook
+    get_db_poc_hook,
 )
 
 
