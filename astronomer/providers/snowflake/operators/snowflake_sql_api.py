@@ -5,14 +5,11 @@ from airflow.exceptions import AirflowException
 from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
 from airflow.utils.context import Context
 
-from astronomer.providers.snowflake.hooks.snowflake import SnowflakeHookAsync
-from astronomer.providers.snowflake.triggers.snowflake_trigger import (
-    SnowflakeTrigger,
-    get_db_hook,
-)
+from astronomer.providers.snowflake.hooks.snowflake_sql_api import SnowflakeSQLAPIHookAsync
+from astronomer.providers.snowflake.triggers.snowflake_sql_api_trigger import SnowflakeSQLAPITrigger
 
 
-class SnowflakeOperatorAsync(SnowflakeOperator):
+class SnowflakeSQLOperatorAsync(SnowflakeOperator):
     """
     Executes SQL code in a Snowflake database
 
@@ -43,6 +40,7 @@ class SnowflakeOperatorAsync(SnowflakeOperator):
 
     def __init__(self, *, poll_interval: int = 5, **kwargs: Any) -> None:
         self.poll_interval = poll_interval
+        self.statement_count = 0
         super().__init__(**kwargs)
 
     def execute(self, context: Context) -> None:
@@ -52,8 +50,8 @@ class SnowflakeOperatorAsync(SnowflakeOperator):
         By deferring the SnowflakeTrigger class pass along with query ids.
         """
         self.log.info("Executing: %s", self.sql)
-        hook = self.get_db_hook()
-        hook.run(self.sql, autocommit=self.autocommit, parameters=self.parameters)
+        hook = SnowflakeSQLAPIHookAsync(snowflake_conn_id=self.snowflake_conn_id)
+        hook.run(self.sql, statement_count=self.statement_count)
         self.query_ids = hook.query_ids
 
         if self.do_xcom_push:
@@ -61,7 +59,7 @@ class SnowflakeOperatorAsync(SnowflakeOperator):
 
         self.defer(
             timeout=self.execution_timeout,
-            trigger=SnowflakeTrigger(
+            trigger=SnowflakeSQLAPITrigger(
                 task_id=self.task_id,
                 polling_period_seconds=self.poll_interval,
                 query_ids=self.query_ids,
